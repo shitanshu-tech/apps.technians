@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>      
+        <!-- 1 morning todo list scheduled action -->
+        <record id="reminder_cron_eoi_tech" model="ir.cron">
+            <field name="name">Today TODO List</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_deadline_reminder_morning_self()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+        <!-- 2 evening todo list scheduled action-->
+        <record id="reminder_cron_eod_tech" model="ir.cron">
+            <field name="name">Today Pending TODO List</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_deadline_reminder_evening_self()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+        <!-- 3 In task deadline not found scheduled action-->
+        <record id="cron_send_email_to_deadline_missing" model="ir.cron">
+            <field name="name">Missing Deadline Reminder </field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.send_email_to_deadline_missing()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+        <!-- 4 deadline passed sending mail for the admin scheduled action-->
+        <record id="cron_send_email_overdue_to_all_admin" model="ir.cron">
+            <field name="name">Overdue Task Reminder </field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.send_email_overdue_to_all_admin()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+        <!-- 5 deadline passed sending mail for the users scheduled action-->
+        <record id="cron_send_email_overdue_to_specific_users" model="ir.cron">
+            <field name="name">Overdue Task Reminder for users </field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.send_email_overdue_to_specific_users()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- 6 Overdue task absent users scheduled action-->
+        <record id="cron_task_overdue_before_today" model="ir.cron">
+            <field name="name">Critical Overdue Task Reminder for users </field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.task_overdue_before_today()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- 7 Project Renewals scheduled action-->
+        <record id="cron_project_renewal_reminder" model="ir.cron">
+            <field name="name">Upcoming Project Renewals </field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.project_renewal_reminder()</field>
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+<!-- ............................................................... -->
+
+<!-- add created custom filter field  -->
+        <record id="view_task_search_form_inherit" model="ir.ui.view">
+            <field name="name">project.task.search.form.extended</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_search_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_tasks']" position="after">
+                <!-- filter all deadline missing -->
+                    <filter string="Deadline Missing" name="filter_missing_deadline" domain="[('date_deadline', '=', False),('is_closed', '=', False)]"/>
+                    <!-- filter all task deadline passed -->
+                    <filter string="Overdue Tasks" name="filter_passed_deadline" domain="[('date_deadline', '&lt;', context_today()),('is_closed', '=', False)]" groups="project.group_project_manager"/>
+                    <!-- filter task deadline passed for the specific users -->
+                    <filter string="My Overdue Tasks" name="filter_pass_deadlines" 
+                                domain="[('date_deadline', '&lt;', context_today()), ('user_ids', 'in', uid),('is_closed', '=', False)]"/>
+                </xpath>
+            </field>
+        </record>
+<!--  -->
+<!-- view task list all deadline missing -->
+        <record id="view_tech_task_list" model="ir.ui.view">
+            <field name="name">Missing Deadline</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+            <!-- view table field -->
+                <tree>
+                    <field name="name"/>
+                    <field name="project_id"/>
+                    <field name="user_ids" widget="many2many_avatar_user"/>
+                    <field name="activity_ids"/>
+                    <field name="tag_ids"/>
+                    <field name="stage_id"/>                   
+                </tree>                
+            </field>
+        </record>
+        <!-- action task list  -->
+        <record id="action_task_list_action" model="ir.actions.act_window">
+            <field name="name">Task Without Deadline</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_tech_task_list"/>
+            <field name="context">{"search_default_filter_missing_deadline":1}</field>
+        </record>
+        <!-- <menuitem id="tech_task" name="deadline reminder" action="action_task_list_action"
+            parent='project.menu_main_pm' sequence="8" /> -->
+<!--  -->
+<!-- view task list all deadline passed for admin -->
+        <record id="view_admin_tasks_list" model="ir.ui.view">
+            <field name="name">Overdue Task</field>
+            <field name="model">project.task</field>    
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="project_id"/>
+                    <field name="user_ids" widget="many2many_avatar_user"/>
+                    <field name="activity_ids"/>
+                    <field name="tag_ids"/>
+                    <field name="stage_id"/>                    
+                </tree>               
+            </field>
+        </record>
+        <!-- action task list  -->
+        <record id="action_tasks_list_action" model="ir.actions.act_window">
+            <field name="name">Task Passed Deadline</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_admin_tasks_list"/>
+            <field name="context">{"search_default_filter_passed_deadline":1}</field>
+        </record>
+        <!-- <menuitem id="tech_tasks" name="overdue task" action="action_tasks_list_action"
+            parent='project.menu_main_pm' sequence="8" /> -->
+<!--  -->
+<!-- view task list  deadline passed for specific users -->
+        <record id="view_users_list_tasks" model="ir.ui.view">
+            <field name="name">Overdue Task for Specific users</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="project_id"/>
+                    <field name="user_ids" widget="many2many_avatar_user"/>
+                    <field name="activity_ids"/>
+                    <field name="tag_ids"/>
+                    <field name="stage_id"/>    
+                </tree>               
+            </field>
+        </record>
+        <!-- action task list  -->
+        <record id="action_users_list_action" model="ir.actions.act_window">
+            <field name="name">Task Passed Deadline for Specific users</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_users_list_tasks"/>
+            <field name="context">{"search_default_filter_pass_deadlines":1}</field>
+        </record>
+        <!-- <menuitem id="tech_users" name="overdue task for user" action="action_users_list_action"
+            parent='project.menu_main_pm' sequence="8" /> -->
+<!--  -->
+</odoo>
+
+
+
+
+
+

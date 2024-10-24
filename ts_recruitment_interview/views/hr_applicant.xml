@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_applicant_extended_button" model="ir.ui.view">
+        <field name="name">hr.applicant.extended.button</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form//header" position="inside">
+                <button class="btn btn-primary" name="schedule_interview" type="object">
+                    Interview
+                </button>
+            </xpath>
+            <xpath expr="//button[@name='action_makeMeeting']" position="before">
+                <field name="interview_ids" invisible="1"/>
+                <button class="oe_stat_button" icon="fa-calendar-check-o" name="display_interview_list" type="object"
+                        attrs="{'invisible': [('interview_ids', '=', [])]}">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="interview_count"/>
+                            Interviews
+                        </span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_applicant_extended_kanban" model="ir.ui.view">
+        <field name="name">hr.applicant.extended.kanban</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='o_kanban_record_subtitle']" position="after">
+                <field name="interview_ids" invisible="1"/>
+                <div class="o_kanban_record_subtitle" attrs="{'invisible': [('interview_ids', '=', [])]}">
+                    <field name="interview_count"/> Interview Scheduled
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

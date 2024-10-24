@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_hr_interview_wizard_form" model="ir.ui.view">
+            <field name="name">hr.interview.form</field>
+            <field name="model">hr.interview.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" string="Applicant"/>
+                            </group>
+                            <group>
+                            </group>
+                            <group>
+                                <field name="job_id"/>
+                                <field name="interviewer_id" widget="many2one_avatar_user"/>
+                                <field name="recruiter_id" widget="many2one_avatar_user"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="time_in"/>
+                            </group>
+                            <group>
+                                <field name="duration" widget="float_time"/>
+                                <field name="time_out" invisible="1"/>
+                            </group>
+                            <group string="HR Note" >
+                            </group>
+                            <field name="hr_note"/>
+                            <group string="Attachments" >
+                            </group>
+                            <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1" colspan="2"/>
+                        </group>
+                        <notebook>
+                            <page string="Skills">
+                                <field mode="tree" name="applicant_skill_ids"
+                                       widget="section_and_note_one2many">
+                                    <tree>
+                                        <field name="skill_type_id"/>
+                                        <field name="skill_id"/>
+                                        <field name="skill_level_id"/>
+                                        <field name="level_progress" widget="progressbar"/>
+                                        <field name="applicant_skill_level_id"/>
+                                        <field name="applicant_level_progress" widget="progressbar"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Questions">
+                                <field mode="tree" name="interview_question_ids" widget="section_and_note_one2many">
+                                    <tree editable="1">
+                                        <field name="name"
+                                               options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                                        <field name="rating" widget="priority"/>
+                                        <field name="feedback"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                    <footer>
+                        <button name="create_interviews" class="btn-primary" type="object" string="Create Interview">
+                        </button>
+                        <button string="Cancel" class="btn-secondary" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="view_hr_interview_wizard_tree" model="ir.ui.view">
+            <field name="name">hr.interview.tree</field>
+            <field name="model">hr.interview.wizard</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="job_id"/>
+                    <field name="interviewer_id"/>
+                    <field name="recruiter_id" widget="many2one_avatar_user"/>
+                    <field name="time_in"/>
+                    <field name="duration" widget="float_time"/>
+                    <field name="time_out" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_hr_interview_wizard_views" model="ir.actions.act_window">
+            <field name="name">Interview</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.interview.wizard</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="view_hr_interview_wizard_tree"/>
+        </record>
+    </data>
+</odoo>

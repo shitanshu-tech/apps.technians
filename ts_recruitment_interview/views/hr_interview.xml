@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_hr_interview_form" model="ir.ui.view">
+            <field name="name">hr.interview.form</field>
+            <field name="model">hr.interview</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="mark_shortlisted"
+                                class="btn btn-primary" type="object"
+                                string="Mark Shortlisted"
+                                attrs="{'invisible':[('is_stage_held', '=', True)]}">
+                        </button>
+                        <button name="mark_rejected"
+                                class="btn btn-primary" type="object"
+                                string="Mark Rejected"
+                                attrs="{'invisible':[('is_stage_held', '=', True)]}">
+                        </button>
+                        <button name="mark_cancelled" type="object" string="Cancelled"
+                                attrs="{'invisible':[('is_stage_held', '=', True)]}">
+                        </button>
+                        <field name="stage_id" widget="statusbar" options="{'clickable':'1'}"/>
+                        <field name="is_stage_held" invisible="1"/>
+                        <field name="is_stage_shortlisted" invisible="1"/>
+                        <field name="is_stage_rejected" invisible="1"/>
+                        <field name="is_stage_cancelled" invisible="1"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                attrs="{'invisible': [('active', '=', True)]}"/>
+                        <widget name="web_ribbon" title="Shortlisted" bg_color="bg-success"
+                                attrs="{'invisible': [('is_stage_shortlisted', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Rejected" bg_color="bg-info"
+                                attrs="{'invisible': [('is_stage_rejected', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Cancelled" bg_color="bg-danger"
+                                attrs="{'invisible': [('is_stage_cancelled', '=', False)]}"/>
+                        <group>
+                            <group>
+                                <field name="name" string="Applicant"
+                                       attrs="{'readonly':[('is_stage_held', '=', True)]}"/>
+                            </group>
+                            <group>
+                                <!--                                <field name="is_default" invisible="1"/>-->
+                                <!--                                <field name="is_held" attrs="{'invisible':[('is_held','=',False)]}"/>-->
+                                <!--                                <field name="is_cancelled" attrs="{'invisible':[('is_cancelled','=',False)]}"/>-->
+                            </group>
+                            <group>
+                                <field name="job_id" attrs="{'readonly':[('is_stage_held', '=', True)]}"/>
+                                <field name="interviewer_id" widget="many2one_avatar_user"
+                                       attrs="{'readonly':[('is_stage_held', '=', True)]}"/>
+                                <field name="recruiter_id" widget="many2one_avatar_user"
+                                       attrs="{'readonly':[('is_stage_held', '=', True)]}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="time_in" attrs="{'readonly':[('is_stage_held', '=', True)]}"/>
+                            </group>
+                            <group>
+                                <field name="duration" widget="float_time"
+                                       attrs="{'readonly':[('is_stage_held', '=', True)]}"/>
+                                <field name="time_out" invisible="1"/>
+                            </group>
+                            <group string="Feedback">
+                            </group>
+                            <field name="feedback"/>
+                            <group string="HR Note">
+                            </group>
+                            <field name="hr_note"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Skills">
+                                <!--                                <div class="row">-->
+                                <!--                                    <div class="o_hr_skills_editable o_hr_skills_group o_group_skills col-lg-15 d-flex flex-column">-->
+                                <field mode="tree" name="applicant_skill_ids"
+                                       widget="section_and_note_one2many">
+                                    <tree>
+                                        <field name="skill_type_id" invisible="1"/>
+                                        <field name="skill_id" string="Required Skill"/>
+                                        <field name="skill_level_id" string="Required Skill Level"/>
+                                        <field name="level_progress" widget="progressbar" nolabel="1"/>
+                                        <field name="applicant_skill_level_id"/>
+                                        <field name="applicant_level_progress" widget="progressbar" nolabel="1"/>
+                                        <field name="reported_skill_level_id"/>
+                                        <field name="reported_level_progress" widget="progressbar" nolabel="1"/>
+                                    </tree>
+                                </field>
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
+                            </page>
+                            <page string="Questions">
+                                <field mode="tree" name="interview_question_ids" widget="section_and_note_one2many">
+                                    <tree editable="1">
+                                        <field name="name"
+                                               options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                                        <field name="rating" widget="priority"/>
+                                        <field name="feedback"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hr_interview_tree" model="ir.ui.view">
+            <field name="name">hr.interview.tree</field>
+            <field name="model">hr.interview</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="job_id"/>
+                    <field name="interviewer_id" widget="many2one_avatar_user"/>
+                    <field name="recruiter_id" widget="many2one_avatar_user"/>
+                    <field name="time_in"/>
+                    <field name="duration" widget="float_time"/>
+                    <field name="time_out" invisible="1"/>
+                    <field name="stage_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_hr_interview_search" model="ir.ui.view">
+            <field name="name">hr.interview.search</field>
+            <field name="model">hr.interview</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="job_id"/>
+                    <field name="interviewer_id"/>
+                    <field name="recruiter_id"/>
+                    <filter string="Scheduled" name="scheduled" domain="[('stage_id.is_default', '=', True)]"/>
+                    <filter string="Shortlisted" name="shortlisted" domain="[('stage_id.is_shortlisted', '=', True)]"/>
+                    <filter string="Rejected" name="rejected" domain="[('stage_id.is_rejected', '=', True)]"/>
+                    <filter string="Cancelled" name="cancelled" domain="[('stage_id.is_cancelled', '=', True)]"/>
+                    <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                    <filter string="Created Today" name="created_today"
+                            domain="[('create_date', '&gt;=', context_today()), ('create_date', '&lt;', (context_today() + relativedelta(days=1)).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
+                    <filter string="Scheduled Today" name="today"
+                            domain="[('time_in', '&gt;=', context_today()), ('time_in', '&lt;', (context_today() + relativedelta(days=1)).strftime('%%Y-%%m-%%d 00:00:00'))]"/>
+                    <filter string="Scheduled this Week" name="this_week" domain="[
+                ('time_in', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                ('time_in', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+
+                    <group name="groupby">
+                        <filter
+                                name="interviewer_groupby"
+                                string="Interviewer"
+                                context="{'group_by': 'interviewer_id'}"
+                        />
+                        <filter
+                                name="recruiter_groupby"
+                                string="Recruiter"
+                                context="{'group_by': 'recruiter_id'}"
+                        />
+                        <filter
+                                name="job_groupby"
+                                string="Job Position"
+                                context="{'group_by': 'job_id'}"
+                        />
+                        <filter
+                                name="stage_groupby"
+                                string="Stage"
+                                context="{'group_by': 'stage_id'}"
+                        />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_hr_interview_kanban" model="ir.ui.view">
+            <field name="name">hr.interview.kanban</field>
+            <field name="model">hr.interview</field>
+            <field name="arch" type="xml">
+                <kanban create="true"
+                        class="o_kanban_small_column"
+                        default_group_by="stage_id"
+                        on_create="quick_create">
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click" style="margin: 10px 0px; border-radius: 10px;">
+                                <div class="oe_kanban_content">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_details">
+                                            <strong class="o_kanban_record_title">
+                                                <field name="name"/>
+                                            </strong>
+                                            <div class="o_kanban_tag">
+                                                <field name="job_id"/>
+                                            </div>
+                                            <!--                                        <div class="o_kanban_tag">-->
+                                            <!--                                            <field name="recruiter_id" widget="many2one_avatar_user"/>-->
+                                            <!--                                        </div>-->
+                                            <div class="o_kanban_tag">
+                                                <field name="time_in" widget="remaining_days"/>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="duration" widget="float_time"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <field name="interviewer_id" widget="many2one_avatar_user" t-attf-options="{'size': '128'}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </t>
+
+
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!--        <record id="view_hr_interview_search" model="ir.ui.view">-->
+        <!--            <field name="name">hr.interview.search</field>-->
+        <!--            <field name="model">hr.interview</field>-->
+        <!--            <field name="arch" type="xml">-->
+        <!--                <search string="Interviews">-->
+        <!--                    <filter string="Filter by Applicant" name="filter_by_applicant" domain="[('name', '=', context.get('default_name'))]"/>-->
+        <!--                </search>-->
+        <!--            </field>-->
+        <!--        </record>-->
+
+
+        <record id="action_hr_interview_views" model="ir.actions.act_window">
+            <field name="name">Interview</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.interview</field>
+            <field name="view_mode">tree,kanban,form,search</field>
+            <field name="context">{'search_default_scheduled': 1}</field>
+            <field name="view_id" ref="view_hr_interview_tree"/>
+        </record>
+
+        <menuitem
+                name="Recruitment"
+                id="hr_recruitment.menu_hr_recruitment_root"
+                groups="hr_recruitment.group_hr_recruitment_user,hr_recruitment.group_hr_recruitment_interviewer,group_hr_interviewer"/>
+
+        <menuitem
+                name="Interview"
+                id="hr_interview_menu"
+                parent="hr_recruitment.menu_hr_recruitment_root"
+                sequence="1"
+                action="action_hr_interview_views"
+                groups="hr_recruitment.group_hr_recruitment_user,hr_recruitment.group_hr_recruitment_interviewer,group_hr_interviewer"/>
+
+
+        <!--        <menuitem-->
+        <!--                name="Applications"-->
+        <!--                id="menu_crm_case_categ0_act_job"-->
+        <!--                parent="hr_recruitment.menu_hr_recruitment_root"-->
+        <!--                sequence="2"-->
+        <!--                groups="hr_recruitment.group_hr_recruitment_user"/>-->
+
+        <menuitem
+                name="Applications"
+                id="hr_recruitment.menu_crm_case_categ0_act_job"
+                parent="hr_recruitment.menu_hr_recruitment_root"
+                groups="hr_recruitment.group_hr_recruitment_user"/>
+
+    </data>
+</odoo>

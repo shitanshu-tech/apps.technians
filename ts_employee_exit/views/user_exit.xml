@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_inherit_is_depend" model="ir.ui.view">
+        <field name="name">res.users.form.assignes.button</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_show_rules']" position="after">
+                <button name="action_assignes"
+                        type="object"
+                        string="Tasks"
+                        class="oe_stat_button"
+                        icon="fa-list"
+                        attrs="{'invisible': [('assigned_task_count', '=', 0)]}">
+                    <div class="o_field_widget o_stat_info">
+                        <field name="assigned_task_count"/>
+                        <span class="o_stat_text" t-attf-style="color: #363333;">
+                            Task
+                        </span>
+                    </div>
+                </button>
+
+                <!-- Project Manager Button -->
+                <button name="action_project_manager"
+                        type="object"
+                        string="Projects(AM)"
+                        class="oe_stat_button"
+                        icon="fa-list"
+                        attrs="{'invisible': [('project_pm_count', '=', 0)]}">
+                    <div class="o_field_widget o_stat_info">
+                        <field name="project_pm_count"/>
+                        <span class="o_stat_value" t-attf-style="color: #363333;">
+                            Projects(PM)
+                        </span>
+                    </div>
+                </button>
+
+                <!-- Account Manager Button -->
+                <button name="action_account_manager_project"
+                        type="object"
+                        string="Project(Account Manager)"
+                        class="oe_stat_button"
+                        icon="fa-list"
+                        attrs="{'invisible': [('project_am_count', '=', 0)]}">
+                    <div class="o_field_widget o_stat_info">
+                        <field name="project_am_count"/>
+                        <span class="o_stat_value" t-attf-style="color: #363333;">
+                            Projects(AM)
+                        </span>
+                    </div>
+                </button>
+
+                <button name="action_follower_projects"
+                        type="object"
+                        string="Project(Followers)"
+                        class="oe_stat_button"
+                        icon="fa-list"
+                        attrs="{'invisible': [('project_follower_count', '=', 0)]}">
+                    <div class="o_field_widget o_stat_info">
+                        <field name="project_follower_count"/>
+                        <span class="o_stat_value" t-attf-style="color: #363333;">
+                            Projects Followers
+                        </span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_user_exit_form" model="ir.ui.view">
+        <field name="name">user.exit.form</field>
+        <field name="model">user.exit</field>
+        <field name="arch" type="xml">
+            <form string="User Exit">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1"/>
+                            <field name="task_count" readonly="1"/>
+                            <field name="project_manager_count" readonly="1"/>
+                            <field name="account_manager_count" readonly="1"/>
+                            <field name="follower_count" readonly="1"/>
+                            <!--                        <field name="project_count" readonly="1"/>-->
+                            <field name="course_count" readonly="1"/>
+                            <field name="team_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="remove_from_task"/>
+                            <field name="remove_from_project"/>
+                            <field name="remove_from_course"/>
+                            <field name="remove_from_project_team"/>
+                        </group>
+                        <group>
+                            <field name="task_replacement_user_id"/>
+                            <field name="project_replacement_user_id"/>
+                            <field name="course_replacement_user_id"/>
+                            <field name="team_replacement_user_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="archive_user"/>
+                    </group>
+                    <footer>
+                        <button string="Remove" type="object" name="exit_user" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_user_exit" model="ir.actions.act_window">
+        <field name="name">User Exit</field>
+        <field name="res_model">user.exit</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_exit_user" model="ir.actions.server">
+        <field name="name">Exit Employee</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="binding_model_id" ref="base.model_res_users"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.open_user_exit_wizard()
+        </field>
+    </record>
+</odoo>

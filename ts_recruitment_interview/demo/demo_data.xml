@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<odoo noupdate="1">
+
+    <record id="interview_stage1" model="hr.interview.stage">
+        <field name="name">Scheduled</field>
+        <field name="sequence">1</field>
+        <field name="is_default">True</field>
+    </record>
+    <record id="interview_stage2" model="hr.interview.stage">
+        <field name="name">Shortlisted</field>
+        <field name="sequence">2</field>
+        <field name="is_shortlisted">True</field>
+    </record>
+    <record id="interview_stage3" model="hr.interview.stage">
+        <field name="name">Rejected</field>
+        <field name="sequence">2</field>
+        <field name="is_rejected">True</field>
+    </record>
+    <record id="interview_stage4" model="hr.interview.stage">
+        <field name="name">Cancelled</field>
+        <field name="sequence">3</field>
+        <field name="is_cancelled">True</field>
+    </record>
+
+</odoo>

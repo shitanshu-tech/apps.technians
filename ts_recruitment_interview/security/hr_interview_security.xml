@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+<!--<odoo>-->
+    <record id="group_hr_interviewer" model="res.groups">
+        <field name="name">Interviewers</field>
+        <field name="category_id" ref="base.module_category_human_resources_recruitment"/>
+        <!--        <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>-->
+    </record>
+
+    <record id="hr_recruitment.group_hr_recruitment_user" model="res.groups">
+        <field name="name">Officer : Manage all applicants and Interviews</field>
+        <field name="category_id" ref="base.module_category_human_resources_recruitment"/>
+        <field name="implied_ids" eval="[(6, 0, [ref('hr.group_hr_user'), ref('ts_recruitment_interview.group_hr_interviewer')])]"/>
+<!--               eval="[(4, ref('group_hr_interviewer'))]"/>-->
+    </record>
+
+<!--    <field name="implied_ids" eval="[(4, ref('base.group_private_addresses')),(4, ref('base.group_user'))]"/>-->
+<!--    <field name="implied_ids" eval="[(6, 0, [ref('base.group_private_addresses'), ref('base.group_user')])]"/>-->
+
+    <record id="base.default_user" model="res.users">
+        <field name="groups_id" eval="[(4,ref('ts_recruitment_interview.group_hr_interviewer'))]"/>
+    </record>
+
+    <record id="hr_interview_officer_rule" model="ir.rule">
+        <field name="name">Interviewers Officer Access Rule</field>
+        <field name="model_id" ref="model_hr_interview"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <!--        <field name="active" eval="True"/>-->
+        <field name="groups" eval="[(4, ref('hr_recruitment.group_hr_recruitment_user'))]"/>
+    </record>
+
+    <record id="hr_interview_rule" model="ir.rule">
+        <field name="name">Interviewers Access Rule</field>
+        <field name="model_id" ref="model_hr_interview"/>
+        <field name="domain_force">[('interviewer_id', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <!--        <field name="active" eval="True"/>-->
+        <field name="groups" eval="[(4, ref('group_hr_interviewer'))]"/>
+    </record>
+
+
+    <!--    <record id="hr_interview_interviewer_rule" model="ir.rule">-->
+    <!--        <field name="name">Interviewers Access Rule</field>-->
+    <!--        <field name="model_id" ref="model_hr_interview"/>-->
+    <!--        <field name="domain_force">[('interviewer_ids', 'in', user.id)]</field>-->
+    <!--        <field name="perm_read" eval="True"/>-->
+    <!--        <field name="perm_write" eval="False"/>-->
+    <!--        <field name="perm_create" eval="False"/>-->
+    <!--        <field name="perm_unlink" eval="False"/>-->
+    <!--        <field name="groups" eval="[(4, ref('ts_recruitment_interview.group_hr_interviewer'))]"/>-->
+    <!--    </record>-->
+
+</odoo>
